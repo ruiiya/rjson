@@ -1,8 +1,8 @@
 import copy
 import json
-from template_parser import TemplateParser
-from template_evaluator import TemplateEvaluator
-from template_lexer import TemplateLexer
+from .template_parser import TemplateParser
+from .template_evaluator import TemplateEvaluator
+from .template_lexer import TemplateLexer
 
 class TemplateRuntime:
     def __init__(self, context=None, functions=None):

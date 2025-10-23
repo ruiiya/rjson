@@ -1,4 +1,4 @@
-from template_lexer import TemplateLexer, TokenType
+from .template_lexer import TemplateLexer, TokenType
 
 # ===== AST Nodes =====
 class Node: pass

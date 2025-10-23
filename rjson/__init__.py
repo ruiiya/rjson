@@ -1,7 +1,7 @@
 """rjson package - small template runtime helpers and runtime API"""
 from .helpers import functions, load_addon, load_addons
 from .helpers import load_addons_from_dir, teardown_addons
-from template_runtime import TemplateRuntime
+from .template_runtime import TemplateRuntime
 import yaml
 import json
 import os
