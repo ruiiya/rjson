@@ -1,0 +1,3 @@
+{
+  "greeting": "$shout('hello json')"
+}

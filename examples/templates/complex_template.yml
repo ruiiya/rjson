@@ -1,0 +1,4 @@
+report:
+  total: "$sum_list([1, 2, 3.5])"
+  note: "$upper_join('-', ['a', 'b', 'c'])"
+  repeated: "$repeat('-', 10)"
