@@ -2,7 +2,7 @@ import argparse
 import json
 import yaml
 from .helpers import functions
-from template_runtime import TemplateRuntime
+from .template_runtime import TemplateRuntime
 
 
 def _build_cli():
