@@ -11,4 +11,4 @@ license = "MIT"
 dependencies = ["PyYAML>=6.0"]
 
 [project.scripts]
-rjson = "rjson.cli:main"
+# CLI entry removed per user request

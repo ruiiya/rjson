@@ -126,9 +126,9 @@ class TemplateParser:
     def parse_ternary(self):
         condition = self.parse_comparison()
         if self.match(TokenType.QUESTION):
-            true_expr = self.parse_comparison()
+            true_expr = self.parse_expression()
             self.expect(TokenType.COLON)
-            false_expr = self.parse_comparison()
+            false_expr = self.parse_expression()
             return TernaryOpNode(condition, true_expr, false_expr)
         return condition
 
