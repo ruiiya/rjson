@@ -16,8 +16,16 @@ class TokenType(Enum):
     MINUS = auto()
     STAR = auto()
     SLASH = auto()
+    GT = auto()
+    LT = auto()
+    GE = auto()
+    LE = auto()
+    EQ = auto()
+    NE = auto()
     NUMBER = auto()
     EOF = auto()
+    QUESTION = auto()
+    COLON = auto()
 
 
 class Token:
@@ -143,6 +151,46 @@ class TemplateLexer:
                         self.next_char()
                     elif nxt == "/":
                         tokens.append(Token(TokenType.SLASH, "/", self.pos))
+                        self.next_char()
+                    elif nxt == ">":
+                        # >= or >
+                        self.next_char()
+                        if self.peek() == "=":
+                            self.next_char()
+                            tokens.append(Token(TokenType.GE, ">=", self.pos - 2))
+                        else:
+                            tokens.append(Token(TokenType.GT, ">", self.pos - 1))
+                    elif nxt == "<":
+                        # <= or <
+                        self.next_char()
+                        if self.peek() == "=":
+                            self.next_char()
+                            tokens.append(Token(TokenType.LE, "<=", self.pos - 2))
+                        else:
+                            tokens.append(Token(TokenType.LT, "<", self.pos - 1))
+                    elif nxt == "=":
+                        # ==
+                        self.next_char()
+                        if self.peek() == "=":
+                            self.next_char()
+                            tokens.append(Token(TokenType.EQ, "==", self.pos - 2))
+                        else:
+                            # single '=' is unexpected in expressions; treat as identifier or skip
+                            tokens.append(Token(TokenType.EQ, "=", self.pos - 1))
+                    elif nxt == "!":
+                        # !=
+                        self.next_char()
+                        if self.peek() == "=":
+                            self.next_char()
+                            tokens.append(Token(TokenType.NE, "!=", self.pos - 2))
+                        else:
+                            # stray '!' — treat as identifier-like token
+                            tokens.append(Token(TokenType.IDENTIFIER, "!", self.pos - 1))
+                    elif nxt == "?":
+                        tokens.append(Token(TokenType.QUESTION, "?", self.pos))
+                        self.next_char()
+                    elif nxt == ":":
+                        tokens.append(Token(TokenType.COLON, ":", self.pos))
                         self.next_char()
                     elif nxt == "$":
                         tokens.append(Token(TokenType.DOLLAR, "$", self.pos))

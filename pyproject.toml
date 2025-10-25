@@ -6,9 +6,9 @@ build-backend = "setuptools.build_meta"
 name = "rjson"
 version = "0.1.0"
 description = "Small YAML-to-JSON template runtime"
-authors = [ {name = "dev", email = "dev@example.com"} ]
+authors = [ {name = "ruiiya"} ]
 license = "MIT"
-dependencies = ["PyYAML>=6.0", "Faker>=18.0.0"]
+dependencies = ["PyYAML>=6.0"]
 
 [project.scripts]
 rjson = "rjson.cli:main"

@@ -70,8 +70,66 @@ class TemplateEvaluator:
                 if denom == 0:
                     raise ZeroDivisionError("Division by zero in template expression")
                 return coerce_numeric(left) / denom
+            # Comparison operators
+            elif node.op in ("==", "!=", ">", "<", ">=", "<="):
+                # equality checks: use Python equality for == and !=
+                if node.op == "==":
+                    return left == right
+                if node.op == "!=":
+                    return left != right
+
+                # for ordering comparisons, try numeric comparison first
+                def try_numeric(x):
+                    if isinstance(x, (int, float)):
+                        return float(x)
+                    if x is None:
+                        return None
+                    if isinstance(x, str):
+                        try:
+                            if '.' in x or 'e' in x or 'E' in x:
+                                return float(x)
+                            return float(int(x))
+                        except Exception:
+                            return None
+                    try:
+                        return float(x)
+                    except Exception:
+                        return None
+
+                nx = try_numeric(left)
+                ny = try_numeric(right)
+                if nx is not None and ny is not None:
+                    if node.op == ">":
+                        return nx > ny
+                    if node.op == "<":
+                        return nx < ny
+                    if node.op == ">=":
+                        return nx >= ny
+                    if node.op == "<=":
+                        return nx <= ny
+
+                # fall back to Python comparisons where possible
+                try:
+                    if node.op == ">":
+                        return left > right
+                    if node.op == "<":
+                        return left < right
+                    if node.op == ">=":
+                        return left >= right
+                    if node.op == "<=":
+                        return left <= right
+                except Exception:
+                    # unable to compare different/unorderable types => False
+                    return False
             else:
                 raise ValueError(f"Unknown operator: {node.op}")
+            
+        if nodename == "TernaryOpNode":
+            condition = self.evaluate(node.condition)
+            if bool(condition):
+                return self.evaluate(node.true_expr)
+            else:
+                return self.evaluate(node.false_expr)
 
         if nodename == "VariableNode":
             return self.eval_var(node)

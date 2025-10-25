@@ -35,6 +35,14 @@ class BinaryOpNode(Node):
         self.right = right
     def __repr__(self): return f"BinaryOpNode({self.left}, {self.op!r}, {self.right})"
 
+class TernaryOpNode(Node):
+    def __init__(self, condition, true_expr, false_expr):
+        self.condition = condition
+        self.true_expr = true_expr
+        self.false_expr = false_expr
+    def __repr__(self):
+        return f"TernaryOpNode({self.condition}, {self.true_expr}, {self.false_expr})"
+
 class TemplateNode(Node):
     def __init__(self, parts): self.parts = parts
     def __repr__(self): return f"TemplateNode({self.parts})"
@@ -110,7 +118,32 @@ class TemplateParser:
         return self.parse_expression()
 
     # --- <expression> ::= <term> ((+|-) <term>)*
+    # Top-level expression parser (includes comparisons)
     def parse_expression(self):
+        return self.parse_ternary()
+    
+    # --- <ternary> ::= <comparison> ('?' <comparison> ':' <comparison>)?
+    def parse_ternary(self):
+        condition = self.parse_comparison()
+        if self.match(TokenType.QUESTION):
+            true_expr = self.parse_comparison()
+            self.expect(TokenType.COLON)
+            false_expr = self.parse_comparison()
+            return TernaryOpNode(condition, true_expr, false_expr)
+        return condition
+
+    # --- <comparison> ::= <additive> ((==|!=|>|<|>=|<=) <additive>)*
+    def parse_comparison(self):
+        left = self.parse_additive()
+        while self.current.type in (TokenType.EQ, TokenType.NE, TokenType.GT, TokenType.LT, TokenType.GE, TokenType.LE):
+            op = self.current.value
+            self.advance()
+            right = self.parse_additive()
+            left = BinaryOpNode(left, op, right)
+        return left
+
+    # --- <additive> ::= <term> ((+|-) <term>)*
+    def parse_additive(self):
         left = self.parse_term()
         while self.current.type in (TokenType.PLUS, TokenType.MINUS):
             op = self.current.value
